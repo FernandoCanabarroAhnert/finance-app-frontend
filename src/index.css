@@ -66,3 +66,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+:root {
+  --primary-color: #712FB8;
+  --secondary-color: #F5BE0C;
+}
