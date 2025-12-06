@@ -5,6 +5,7 @@ import React, {
   useRef,
 } from 'react'
 import Keycloak from 'keycloak-js'
+import { setTokenGetter } from '@/api/api'
 
 interface KeycloakContextProps {
   keycloak: Keycloak | null
@@ -51,6 +52,19 @@ const KeycloakProvider: React.FC<KeycloakProviderProps> = ({ children }) => {
         .finally(() => {
           setKeycloak(keycloakInstance)
           console.log('keycloak', keycloakInstance)
+
+          // registra função que devolve o token atualizado
+          setTokenGetter(async () => {
+            if (!keycloakInstance.authenticated) return undefined;
+
+            // atualiza token se estiver para expirar
+            await keycloakInstance.updateToken(30).catch(() => {
+              console.log("Failed to refresh token");
+              return undefined;
+            });
+
+            return keycloakInstance.token;
+          });
         })
     }
 

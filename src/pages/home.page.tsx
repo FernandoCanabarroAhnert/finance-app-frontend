@@ -10,10 +10,14 @@ export default function Home() {
         keycloak?.login();
     }
 
+    const handleRegister = () => {
+        keycloak?.register();
+    }
+
     return (
         <div className="bg-[linear-gradient(to_bottom,_#712FB820,_white)] min-h-[100dvh]">
             <div className="container mx-auto px-3 md:px-0">
-                <div className="flex flex-col items-center justify-center gap-8 min-h-[45dvh] py-6 md:py-0">
+                <div className="flex flex-col items-center justify-center gap-8 py-10">
                     <h1 className="text-4xl lg:text-5xl font-bold text-primaryColor text-center">Controle suas finanças com facilidade</h1>
                     <p className="md:max-w-[60%] lg:max-w-[45%] font-medium text-gray-500 text-lg text-center">
                         O Finance App ajuda você a gerenciar categorias, relatórios e sua carteira em um só lugar.
@@ -23,7 +27,7 @@ export default function Home() {
                         Começar agora
                     </Button>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 min-h-[45dvh]">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 py-10">
                     <Card className="rounded-lg h-[300px] text-center px-10 py-14 flex flex-col items-center justify-center gap-3 shadow-md">
                         <FaWallet size={44} className="mx-auto text-4xl text-primaryColor" />
                         <p className="text-lg font-semibold">Carteira unificada</p>
@@ -40,8 +44,22 @@ export default function Home() {
                         <p className="text-gray-500">Defina objetivos e acompanhe seu progresso rumo à liberdade financeira.</p>
                     </Card>
                 </div>
+                <div className="flex flex-col items-center justify-center gap-4 py-6">
+                    <h1 className="text-3xl font-bold text-primaryColor text-center">Pronto para começar?</h1>
+                    <p className="md:max-w-[60%] lg:max-w-[45%] font-medium text-gray-500 text-lg text-center">
+                        Cadastre-se agora e organize suas finanças em minutos.
+                    </p>
+                    <div className="flex items-center gap-6">
+                        <Button onClick={handleRegister} className="bg-secondaryColor text-white hover:bg-secondaryColor hover:text-white" variant="outline">
+                            Criar conta
+                        </Button>
+                        <Button onClick={handleLogin} variant="outline">
+                            Entrar
+                        </Button>
+                    </div>
+                </div>
             </div>
-            <footer className="mt-4 lg:mt-0 border-t-[1px] border-t-gray-300 text-center min-h-[10dvh] flex items-center justify-center">
+            <footer className="mt-4 lg:mt-0 border-t-[1px] border-t-gray-300 text-center flex items-center justify-center py-5">
                 <p className="text-gray-500">© 2025 Finance App. Todos os direitos reservados.</p>
             </footer>
         </div>

@@ -4,9 +4,14 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import { routes } from './routes'
 import { KeycloakProvider } from './contexts/keycloak.context'
+import { Toaster } from 'react-hot-toast';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Toaster
+      position="top-right"
+      reverseOrder={false}
+    />
     <KeycloakProvider>
       <RouterProvider router={routes} />
     </KeycloakProvider>
