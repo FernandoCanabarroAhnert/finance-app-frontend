@@ -4,6 +4,7 @@ import Layout from "./components/layout.component";
 import Test from "./pages/test.page";
 import PrivateRoute from "./routes/private.route";
 import Wallets from "./pages/wallets.page";
+import Categories from "./pages/categories.page";
 
 export const routes = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ export const routes = createBrowserRouter([
             {
                 path: 'wallets',
                 element: <PrivateRoute><Wallets/></PrivateRoute>
+            },
+            {
+                path: 'categories',
+                element: <PrivateRoute><Categories/></PrivateRoute>
             }
         ]
     }

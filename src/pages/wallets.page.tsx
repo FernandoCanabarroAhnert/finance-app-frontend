@@ -5,14 +5,8 @@ import type { IWalletResponseDto } from "@/interfaces/wallet/wallet-response.dto
 import { WalletService } from "@/services/wallet.service";
 import { useEffect, useState } from "react";
 import CreateWalletDialog from "@/components/create-wallet-dialog.component";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination"
+import WalletCardSkeleton from "@/components/wallet-card-skeleton.component";
+import Paginator from "@/components/paginator.component";
 
 export default function Wallets() {
     const [walletPage, setWalletPage] = useState<IPageResponse<IWalletResponseDto>>();
@@ -40,47 +34,25 @@ export default function Wallets() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                 {
-                    walletPage && walletPage.content.map(wallet => (
-                        <WalletCard key={wallet.id} wallet={wallet} fetchWalletData={fetchWalletData} />
-                    ))
+                    walletPage && walletPage.content
+                        ? walletPage.content.map(wallet => (
+                            <WalletCard key={wallet.id} wallet={wallet} fetchWalletData={fetchWalletData} />
+                        ))
+                        : [1, 2, 3, 4].map((index) => (
+                            <WalletCardSkeleton key={index} />
+                        ))
                 }
             </div>
             {
                 walletPage && walletPage.totalPages >= 1 && (
                     <div className="flex w-full items-center justify-center mt-4">
-                        <Pagination>
-                            <PaginationContent>
-                                {
-                                    walletPage.number > 0 && (
-                                        <>
-                                            <PaginationItem className="cursor-pointer" onClick={() => handlePageChange(walletPage.number - 1)}>
-                                                <PaginationPrevious />
-                                            </PaginationItem>
-                                            <PaginationItem className="cursor-pointer" onClick={() => handlePageChange(walletPage.number - 1)}>
-                                                <PaginationLink>{walletPage.number}</PaginationLink>
-                                            </PaginationItem>
-                                        </>
-                                    )
-                                }
-                                <PaginationItem className="cursor-pointer">
-                                    <PaginationLink isActive>
-                                        {walletPage.number + 1}
-                                    </PaginationLink>
-                                </PaginationItem>
-                                {
-                                    walletPage.number + 1 < walletPage.totalPages && (
-                                        <>
-                                            <PaginationItem className="cursor-pointer" onClick={() => handlePageChange(walletPage.number + 1)}>
-                                                <PaginationLink>{walletPage.number + 2}</PaginationLink>
-                                            </PaginationItem>
-                                            <PaginationItem className="cursor-pointer" onClick={() => handlePageChange(walletPage.number + 1)}>
-                                                <PaginationNext />
-                                            </PaginationItem>
-                                        </>
-                                    )
-                                }
-                            </PaginationContent>
-                        </Pagination>
+                        <Paginator
+                            pageIndex={walletPage.number}
+                            totalPages={walletPage.totalPages}
+                            pageItems={walletPage.numberOfElements}
+                            totalItems={walletPage.totalElements}
+                            handlePageChange={handlePageChange}
+                        />
                     </div>
                 )
             }
