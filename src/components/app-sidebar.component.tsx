@@ -39,9 +39,8 @@ export default function AppSidebar() {
             </div>
             <div className="hidden md:flex">
                 <Sidebar collapsible="icon" style={{
-                    "--sidebar-width-icon": "4rem",
-                } as React.CSSProperties}
-                    className="relative"
+                        "--sidebar-width-icon": "4rem",
+                    } as React.CSSProperties}
                 >
                     <SidebarContent className="bg-primaryColor text-white">
                         <SidebarHeader className="flex flex-row items-center justify-between p-4">

@@ -1,11 +1,11 @@
-import type { ICategoryRequestDto } from "@/interfaces/category/category-request.dto";
+import type { ITransactionRequestDto } from "@/interfaces/transaction/transaction-request.dto";
 import { api } from "../api/api";
 
-const path = "/categories";
+const path = "/transactions";
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const CategoryService = {
+export const TransactionService = {
   findAll: async (page: number = 0) => {
     const response = await api.get(`${path}?page=${page}&size=${DEFAULT_PAGE_SIZE}`);
     return response.data;
@@ -16,12 +16,12 @@ export const CategoryService = {
     return response.data;
   },
 
-  create: async (data: ICategoryRequestDto) => {
+  create: async (data: ITransactionRequestDto) => {
     const response = await api.post(path, data);
     return response.data;
   },
 
-  update: async (id: number, data: ICategoryRequestDto) => {
+  update: async (id: number, data: ITransactionRequestDto) => {
     const response = await api.put(`${path}/${id}`, data);
     return response.data;
   },
@@ -31,13 +31,13 @@ export const CategoryService = {
     return response.data;
   },
 
-  findSelect: async () => {
-    const response = await api.get(`${path}/select`);
+  getBalanceReport: async () => {
+    const response = await api.get(`${path}/balance-report`);
     return response.data;
   },
 
-  getReport: async () => {
-    const response = await api.get(`${path}/report`);
+  getMonthlyReport: async () => {
+    const response = await api.get(`${path}/monthly-report`);
     return response.data;
   }
 

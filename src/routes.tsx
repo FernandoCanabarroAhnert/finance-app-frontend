@@ -1,10 +1,11 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Home from "./pages/home.page";
 import Layout from "./components/layout.component";
-import Test from "./pages/test.page";
 import PrivateRoute from "./routes/private.route";
 import Wallets from "./pages/wallets.page";
 import Categories from "./pages/categories.page";
+import Transactions from "./pages/transactions.page";
+import Dashboard from "./pages/dashboard.page";
 
 export const routes = createBrowserRouter([
     {
@@ -21,7 +22,7 @@ export const routes = createBrowserRouter([
             },
             {
                 path: 'dashboard',
-                element: <PrivateRoute><Test/></PrivateRoute>
+                element: <PrivateRoute><Dashboard/></PrivateRoute>
             },
             {
                 path: 'wallets',
@@ -30,6 +31,10 @@ export const routes = createBrowserRouter([
             {
                 path: 'categories',
                 element: <PrivateRoute><Categories/></PrivateRoute>
+            },
+            {
+                path: 'transactions',
+                element: <PrivateRoute><Transactions/></PrivateRoute>
             }
         ]
     }

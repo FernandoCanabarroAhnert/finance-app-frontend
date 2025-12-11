@@ -30,6 +30,16 @@ export const WalletService = {
   delete: async (id: number) => {
     const response = await api.delete(`${path}/${id}`);
     return response.data;
+  },
+
+  findSelect: async () => {
+    const response = await api.get(`${path}/select`);
+    return response.data;
+  },
+
+  getReport: async () => {
+    const response = await api.get(`${path}/report`);
+    return response.data;
   }
 
 };

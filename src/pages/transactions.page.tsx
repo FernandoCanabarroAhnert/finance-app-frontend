@@ -3,9 +3,6 @@
 import useTitle from "@/hooks/use-title.hook";
 import type { IPageResponse } from "@/interfaces/page/page-response.dto";
 import { useEffect, useState } from "react";
-import type { ICategoryResponseDto } from "@/interfaces/category/category-response.dto";
-import { CategoryService } from "@/services/category.service";
-import CategoryDialog from "@/components/category-dialog.component";
 import {
     Table,
     TableBody,
@@ -20,38 +17,38 @@ import { toast } from "react-hot-toast";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Paginator from "@/components/paginator.component";
+import { TransactionService } from "@/services/transaction.service";
+import type { ITransactionResponseDto } from "@/interfaces/transaction/transaction-response.dto";
+import TransactionDialog from "@/components/transaction-dialog.component";
+import { formatCurrency } from "@/utils/format-currency.util";
+import { formatDate } from "@/utils/format-date.util";
 
-export default function Categories() {
-    const [categoryPage, setCategoryPage] = useState<IPageResponse<ICategoryResponseDto>>();
-    useTitle("Categorias - Finance App");
+export default function Transactions() {
+    const [transactionPage, setTransactionPage] = useState<IPageResponse<ITransactionResponseDto>>();
+    useTitle("Transações - Finance App");
 
     useEffect(() => {
-        fetchCategoryData();
+        fetchTransactionData();
     }, []);
 
-    const fetchCategoryData = async () => {
-        const response = await CategoryService.findAll();
-        setCategoryPage(response);
+    const fetchTransactionData = async () => {
+        const response = await TransactionService.findAll();
+        setTransactionPage(response);
     }
 
     const handlePageChange = async (page: number) => {
-        const response = await CategoryService.findAll(page);
-        setCategoryPage(response);
+        const response = await TransactionService.findAll(page);
+        setTransactionPage(response);
     }
 
     const handleDelete = async (id: number) => {
         try {
-            await CategoryService.delete(id);
-            toast.success("Categoria excluída com sucesso!");
-            await fetchCategoryData();
+            await TransactionService.delete(id);
+            toast.success("Transação excluída com sucesso!");
+            await fetchTransactionData();
         }
         catch (error: AxiosError | any) {
-            const BAD_REQUEST_ERROR = error.status === 400;
-            if (BAD_REQUEST_ERROR) {
-                toast.error("A categoria não pode ser excluída pois possui transações associadas.");
-            } else {
-                toast.error("Erro ao excluir a categoria. Tente novamente mais tarde.");
-            }
+            toast.error("Erro ao excluir a Transação. Tente novamente mais tarde.");
 
         }
     }
@@ -59,11 +56,11 @@ export default function Categories() {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-secondaryColor text-4xl font-bold">Categorias</h2>
-                <CategoryDialog fetchCategoryData={fetchCategoryData} />
+                <h2 className="text-secondaryColor text-4xl font-bold">Transações</h2>
+                <TransactionDialog fetchTransactionData={fetchTransactionData} />
             </div>
             {
-                categoryPage && categoryPage.content && (
+                transactionPage && transactionPage.content && (
                     <div className="container mx-auto">
                         <Table>
                             <TableHeader>
@@ -71,11 +68,23 @@ export default function Categories() {
                                     <TableHead key="id">
                                         ID
                                     </TableHead>
-                                    <TableHead key="name">
-                                        Nome
+                                    <TableHead key="wallet">
+                                        Carteira
                                     </TableHead>
-                                    <TableHead key="color">
-                                        Cor
+                                    <TableHead key="transaction">
+                                        Categoria
+                                    </TableHead>
+                                    <TableHead key="type">
+                                        Tipo
+                                    </TableHead>
+                                    <TableHead key="description">
+                                        Descrição
+                                    </TableHead>
+                                    <TableHead key="amount">
+                                        Valor
+                                    </TableHead>
+                                    <TableHead key="date">
+                                        Data
                                     </TableHead>
                                     <TableHead key="actions">
                                         Ações
@@ -84,17 +93,23 @@ export default function Categories() {
                             </TableHeader>
                             <TableBody>
                                 {
-                                    categoryPage && categoryPage.content.length > 0 && (
-                                        categoryPage.content.map((category) => (
-                                            <TableRow key={category.id}>
-                                                <TableCell>{category.id}</TableCell>
-                                                <TableCell>{category.name}</TableCell>
-                                                <TableCell>
-                                                    <div className="h-8 w-8 rounded-full" style={{ backgroundColor: category.color }}></div>
+                                    transactionPage && transactionPage.content.length > 0 && (
+                                        transactionPage.content.map((transaction) => (
+                                            <TableRow key={transaction.id}>
+                                                <TableCell>{transaction.id}</TableCell>
+                                                <TableCell>{transaction.walletId}</TableCell>
+                                                <TableCell>{transaction.categoryId}</TableCell>
+                                                <TableCell className="uppercase"
+                                                    style={{ color: transaction.type === 1 ? 'green' : 'red' }}
+                                                >
+                                                    {transaction.type === 1 ? "Entrada" : "Saída"}
                                                 </TableCell>
+                                                <TableCell>{transaction.description}</TableCell>
+                                                <TableCell>{formatCurrency(transaction.amount)}</TableCell>
+                                                <TableCell>{formatDate(new Date(transaction.date))}</TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center gap-2">
-                                                        <CategoryDialog category={category} fetchCategoryData={fetchCategoryData} />
+                                                        <TransactionDialog transaction={transaction} fetchTransactionData={fetchTransactionData} />
                                                         <Dialog>
                                                             <DialogTrigger>
                                                                 <button type="button"
@@ -105,9 +120,9 @@ export default function Categories() {
                                                             </DialogTrigger>
                                                             <DialogContent>
                                                                 <DialogHeader>
-                                                                    <DialogTitle>Deletar Categoria</DialogTitle>
+                                                                    <DialogTitle>Deletar Transação</DialogTitle>
                                                                     <DialogDescription>
-                                                                        Tem certeza que deseja deletar a categoria "{category.name}"? Esta ação não pode ser desfeita.
+                                                                        Tem certeza que deseja deletar a transação? Esta ação não pode ser desfeita.
                                                                     </DialogDescription>
                                                                 </DialogHeader>
                                                                 <DialogFooter>
@@ -115,7 +130,7 @@ export default function Categories() {
                                                                         <Button variant="outline">Cancelar</Button>
                                                                     </DialogClose>
                                                                     <DialogClose asChild>
-                                                                        <Button variant="destructive" onClick={() => handleDelete(category.id)}>Deletar</Button>
+                                                                        <Button variant="destructive" onClick={() => handleDelete(transaction.id)}>Deletar</Button>
                                                                     </DialogClose>
                                                                 </DialogFooter>
                                                             </DialogContent>
@@ -129,13 +144,13 @@ export default function Categories() {
                             </TableBody>
                         </Table>
                         {
-                            categoryPage && categoryPage.totalPages >= 1 && (
+                            transactionPage && transactionPage.totalPages >= 1 && (
                                 <div className="flex w-full items-center justify-center mt-4">
-                                    <Paginator 
-                                        pageIndex={categoryPage.number} 
-                                        totalPages={categoryPage.totalPages} 
-                                        pageItems={categoryPage.numberOfElements}
-                                        totalItems={categoryPage.totalElements}
+                                    <Paginator
+                                        pageIndex={transactionPage.number}
+                                        totalPages={transactionPage.totalPages}
+                                        pageItems={transactionPage.numberOfElements}
+                                        totalItems={transactionPage.totalElements}
                                         handlePageChange={handlePageChange}
                                     />
                                 </div>
