@@ -32,6 +32,11 @@ jobs:
         with:
             context: .
             dockerfile: Dockerfile
+            build-args: |
+                KEYCLOAK_URL=${{ secrets.KEYCLOAK_URL }}
+                KEYCLOAK_REALM=${{ secrets.KEYCLOAK_REALM }}
+                KEYCLOAK_CLIENT=${{ secrets.KEYCLOAK_CLIENT }}
+                API_URL=${{ secrets.API_URL }}
             push: true
             tags: |
                 ${{ secrets.DOCKER_HUB_USERNAME }}/finance-app-frontend:latest 
