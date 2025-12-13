@@ -13,33 +13,18 @@ import type { IReportDto } from "@/interfaces/report.dto";
 import { CategoryService } from "@/services/category.service";
 import { WalletService } from "@/services/wallet.service";
 import PieChartCard from "@/components/pie-chart-card.component";
-
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart"
-
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
 import type { IMonthBalanceReportDto } from "@/interfaces/transaction/month-balance.report.dto";
-
-const monthlyBalanceChartConfig = {
-    balance: {
-        label: "Saldo"
-    },
-} satisfies ChartConfig
+import useTitle from "@/hooks/use-title.hook";
+import PieChartCardSkeleton from "@/components/pie-chart-card-skeleton";
+import MonthlyBalanceReportCard from "@/components/monthly-balance-report-card.component";
+import MonthlyBalanceReportCardSkeleton from "@/components/monthly-balance-report-card-skeleton.component";
 
 export default function Dashboard() {
     const [balanceReport, setBalanceReport] = useState<IBalanceReportDto>();
     const [categoryReport, setCategoryReport] = useState<IReportDto[]>();
     const [walletReport, setWalletReport] = useState<IReportDto[]>();
     const [monthlyBalanceReportChartData, setMonthlyBalanceReportChartData] = useState<IMonthBalanceReportDto[]>();
+    useTitle("Dashboard - Finance App")
 
     useEffect(() => {
         fetchBalanceReport();
@@ -142,7 +127,7 @@ export default function Dashboard() {
             }
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-6">
                 {
-                    categoryChartData && categoryChartConfig && (
+                    categoryReport ? (
                         <div className="order-1">
                             <PieChartCard
                                 chartData={categoryChartData}
@@ -150,57 +135,35 @@ export default function Dashboard() {
                                 title="Relatório de Categorias"
                                 description="Quantidade de transações por categoria" />
                         </div>
+                    ) : (
+                        <div className="order-1">
+                            <PieChartCardSkeleton />
+                        </div>
                     )
                 }
                 {
-                    monthlyBalanceReportChartData && (
-                        <Card className="order-3 2xl:order-2 lg:col-span-2">
-                            <CardHeader>
-                                <CardTitle>Relatório de Saldo Mensal</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <ChartContainer config={monthlyBalanceChartConfig}>
-                                    <LineChart
-                                        accessibilityLayer
-                                        data={monthlyBalanceReportChartData}
-                                        margin={{
-                                            left: 12,
-                                            right: 12,
-                                        }}
-                                    >
-                                        <CartesianGrid vertical={false} />
-                                        <XAxis
-                                            dataKey="month"
-                                            tickLine={false}
-                                            axisLine={false}
-                                            tickMargin={8}
-                                            tickFormatter={(value) => value.slice(0, 3)}
-                                        />
-                                        <ChartTooltip
-                                            cursor={false}
-                                            content={<ChartTooltipContent hideLabel />}
-                                        />
-                                        <Line
-                                            dataKey="balance"
-                                            type="linear"
-                                            stroke="#F5BE0C"
-                                            strokeWidth={2}
-                                            dot={false}
-                                        />
-                                    </LineChart>
-                                </ChartContainer>
-                            </CardContent>
-                        </Card>
+                    monthlyBalanceReportChartData ? (
+                        <div className="order-3 2xl:order-2 lg:col-span-2">
+                            <MonthlyBalanceReportCard monthlyBalanceReportChartData={monthlyBalanceReportChartData} />
+                        </div>
+                    ) : (
+                        <div className="order-3 2xl:order-2 lg:col-span-2">
+                            <MonthlyBalanceReportCardSkeleton />
+                        </div>
                     )
                 }
                 {
-                    walletChartData && walletChartConfig && (
+                    walletReport ? (
                         <div className="order-2 2xl:order-3">
                             <PieChartCard
                                 chartData={walletChartData}
                                 chartConfig={walletChartConfig}
                                 title="Relatório de Carteiras"
                                 description="Quantidade de transações por carteira" />
+                        </div>
+                    ) : (
+                        <div className="order-2 2xl:order-3">
+                            <PieChartCardSkeleton />
                         </div>
                     )
                 }

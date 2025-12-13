@@ -7,11 +7,15 @@ export default function Home() {
     const { keycloak } = useKeycloak();
 
     const handleLogin = () => {
-        keycloak?.login();
+        keycloak?.login({
+            redirectUri: window.location.origin + "/finances/dashboard"
+        });
     }
 
     const handleRegister = () => {
-        keycloak?.register();
+        keycloak?.register({
+            redirectUri: window.location.origin + "/finances/dashboard"
+        });
     }
 
     return (

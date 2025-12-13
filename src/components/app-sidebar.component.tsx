@@ -13,6 +13,8 @@ import { FaHome, FaWallet, FaExchangeAlt, FaIcons, FaUser } from "react-icons/fa
 
 export default function AppSidebar() {
     const { open } = useSidebar();
+    const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL;
+
     return (
         <>
             <div className="flex md:hidden">
@@ -62,7 +64,7 @@ export default function AppSidebar() {
                         </SidebarGroup>
                     </SidebarContent>
                     <SidebarFooter className="bg-primaryColor text-white">
-                        <MenuItem icon={<FaUser />} label="Configurações" open={open} path="http://localhost:8180/realms/finance-app/account" />
+                        <MenuItem icon={<FaUser />} label="Configurações" open={open} path={`${keycloakUrl}/realms/finance-app/account`} />
                     </SidebarFooter>
                 </Sidebar>
             </div>

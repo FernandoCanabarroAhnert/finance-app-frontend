@@ -1,0 +1,54 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    hostname: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    command:
+      - "--log.level=DEBUG"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker.exposedbydefault=false"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker.network=app_dev-network"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      dev-network:
+
+  finance-app-frontend:
+    image: fernandocanabarroahnert/finance-app-frontend
+    container_name: finance-app-frontend
+    restart: always
+    depends_on:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.todo.rule=Host(`finance-ui.fernandocanabarrodev.tech`)"
+      - "traefik.http.routers.todo.entrypoints=websecure"
+      - "traefik.http.routers.todo.tls.certresolver=letsencrypt"
+      - "traefik.http.services.todo.loadbalancer.server.port=80"
+    networks:
+      dev-network:
+
+networks:
+  dev-network:
+    driver: bridge
+
+volumes:
+  letsencrypt:
